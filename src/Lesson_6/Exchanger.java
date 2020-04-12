@@ -14,7 +14,6 @@ public class Exchanger {
     private DataInputStream inStream;
     private DataOutputStream outStream;
     private MessageListener messageListener;
-    private DisconnectionListener disconnectionListener;
     private BooleanProperty connectionStatus;
 
     public Exchanger() {
@@ -46,13 +45,7 @@ public class Exchanger {
                     message = inStream.readUTF();
                     messageListener.messageReceived(message);
                 } catch (IOException e) {
-//                    System.out.println("listenerThread exception: " + e.getMessage());
                     disconnect();
-
-                    if (disconnectionListener != null) {
-                        disconnectionListener.disconnect();
-                    }
-
                     break;
                 }
             }
@@ -75,21 +68,16 @@ public class Exchanger {
         connectionStatus.setValue(false);
     }
 
-    public boolean sendMessage(String message) {
+    public void sendMessage(String message) {
         try {
             outStream.writeUTF(message);
-            return true;
         } catch (Exception e) {
-            return false;
+            System.out.println(e.getMessage());
         }
     }
 
     public void setMessageListener(MessageListener messageListener) {
         this.messageListener = messageListener;
-    }
-
-    public void setDisconnectionListener(DisconnectionListener disconnectionListener) {
-        this.disconnectionListener = disconnectionListener;
     }
 
     public boolean isConnected() {
@@ -102,9 +90,5 @@ public class Exchanger {
 
     interface MessageListener {
         void messageReceived(String Message);
-    }
-
-    interface DisconnectionListener {
-        void disconnect();
     }
 }

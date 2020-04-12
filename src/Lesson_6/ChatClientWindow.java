@@ -2,6 +2,8 @@ package Lesson_6;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,7 +30,6 @@ public class ChatClientWindow extends Application {
     public void start(Stage primaryStage) {
         exchanger = new Exchanger();
         exchanger.setMessageListener(this::displayInputMessage);
-        exchanger.setDisconnectionListener(this::connectToServer);
         initGUI(primaryStage);
         new Thread(this::connectToServer).start();
     }
@@ -99,6 +100,10 @@ public class ChatClientWindow extends Application {
                 tfMessageForSend.setDisable(!newValue);
                 btnSend.setDisable(!newValue);
             });
+
+            if (oldValue && !newValue) {
+                connectToServer();
+            }
         });
 
         tfMessageForSend.requestFocus();

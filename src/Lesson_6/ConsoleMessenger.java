@@ -18,8 +18,9 @@ public class ConsoleMessenger {
                 inputMessage = scanner.nextLine();
                 if (inputMessage.equalsIgnoreCase("/end")) {
                     break;
+                } else if (!inputMessage.trim().isEmpty()) {
+                    inputMessageListener.messageTyped(inputMessage);
                 }
-                inputMessageListener.messageTyped(inputMessage);
             }
         }
     }
