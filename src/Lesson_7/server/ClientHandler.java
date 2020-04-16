@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientHandler {
     private MyServer myServer;
@@ -26,12 +28,21 @@ public class ClientHandler {
             this.name = "";
             new Thread(() -> {
                 try {
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            closeConnection();
+                        }
+                    }, 30_000);
                     authentication();
+                    timer.cancel();
                     readMessages();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     closeConnection();
+                    Thread.currentThread().interrupt();
                 }
             }).start();
         } catch (IOException e) {

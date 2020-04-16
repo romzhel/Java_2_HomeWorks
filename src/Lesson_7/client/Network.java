@@ -43,7 +43,7 @@ public class Network implements Closeable {
         }
     }
 
-    private void connect() {
+    public void connect() {
         try {
             socket = new Socket("localhost", 8189);
             in = new DataInputStream(socket.getInputStream());

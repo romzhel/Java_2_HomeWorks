@@ -56,6 +56,7 @@ public class Controller implements Initializable {
             }
         });
         linkCallbacks();
+        network.connect();
     }
 
     public void sendAuth() {
