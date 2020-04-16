@@ -12,10 +12,6 @@ public class MyServer {
     private List<ClientHandler> clients;
     private AuthService authService;
 
-    public AuthService getAuthService() {
-        return authService;
-    }
-
     public MyServer() {
         try (ServerSocket server = new ServerSocket(PORT)) {
             authService = new BaseAuthService();
@@ -37,6 +33,10 @@ public class MyServer {
         }
     }
 
+    public AuthService getAuthService() {
+        return authService;
+    }
+
     public synchronized boolean isNickBusy(String nick) {
         for (ClientHandler o : clients) {
             if (o.getName().equals(nick)) {
@@ -52,11 +52,28 @@ public class MyServer {
         }
     }
 
+    public synchronized void personalMsg(String fromNick, String toNick, String msg) {
+        for (ClientHandler o : clients) {
+            if (o.getName().equals(fromNick) || o.getName().equals(toNick)) {
+                o.sendMsg(String.format("%s -> %s: %s", fromNick, toNick, msg));
+            }
+        }
+    }
+
     public synchronized void unsubscribe(ClientHandler o) {
         clients.remove(o);
     }
 
     public synchronized void subscribe(ClientHandler o) {
         clients.add(o);
+    }
+
+    public synchronized String getConnectedNicks() {
+        StringBuilder result = new StringBuilder();
+        for (ClientHandler cl : clients) {
+            result.append(cl.getName()).append(" ");
+        }
+
+        return result.toString().trim();
     }
 }

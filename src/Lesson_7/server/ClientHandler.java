@@ -48,8 +48,9 @@ public class ClientHandler {
                 if (nick != null) {
                     if (!myServer.isNickBusy(nick)) {
                         sendMsg("/authok " + nick);
+                        sendConnectedContacts();
                         name = nick;
-                        myServer.broadcastMsg(name + " зашел в чат");
+                        myServer.broadcastMsg("/a " + name);
                         myServer.subscribe(this);
                         return;
                     } else {
@@ -68,8 +69,13 @@ public class ClientHandler {
             System.out.println("от " + name + ": " + strFromClient);
             if (strFromClient.equals("/end")) {
                 return;
+            } else if (strFromClient.startsWith("/w")) {
+                strFromClient = strFromClient.replaceFirst("/w ", "");
+                int spacePos = strFromClient.indexOf(" ");
+                myServer.personalMsg(name, strFromClient.substring(0, spacePos), strFromClient.substring(spacePos + 1));
+            } else {
+                myServer.broadcastMsg(name + ": " + strFromClient);
             }
-            myServer.broadcastMsg(name + ": " + strFromClient);
         }
     }
 
@@ -81,9 +87,16 @@ public class ClientHandler {
         }
     }
 
+    public void sendConnectedContacts() {
+        String contacts = myServer.getConnectedNicks();
+        if (!contacts.isEmpty()) {
+            sendMsg("/cs " + contacts);
+        }
+    }
+
     public void closeConnection() {
         myServer.unsubscribe(this);
-        myServer.broadcastMsg(name + " вышел из чата");
+        myServer.broadcastMsg("/r " + name);
         try {
             in.close();
         } catch (IOException e) {

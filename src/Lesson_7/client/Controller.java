@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -89,20 +90,22 @@ public class Controller implements Initializable {
         });
 
         network.setCallOnMsgReceived(args -> {
-            String msg = args[0].toString();
-            if (msg.startsWith("/")) {
-                if (msg.startsWith("/clients ")) {
-                    String[] tokens = msg.split("\\s");
-                    Platform.runLater(() -> {
+            Platform.runLater(() -> {
+                String msg = args[0].toString();
+                if (msg.startsWith("/")) {
+                    if (msg.startsWith("/a")) {
+                        clientsList.getItems().add(msg.replaceFirst("/a ", ""));
+                    } else if (msg.startsWith("/r")) {
+                        clientsList.getItems().remove(msg.replaceFirst("/r ", ""));
+                    } else if (msg.startsWith("/cs")) {
                         clientsList.getItems().clear();
-                        for (int i = 1; i < tokens.length; i++) {
-                            clientsList.getItems().add(tokens[i]);
-                        }
-                    });
+                        clientsList.getItems().addAll(Arrays.asList(msg.replaceFirst("/cs ", "")
+                                .split("\\s")));
+                    }
+                } else {
+                    textArea.appendText(msg + "\n");
                 }
-            } else {
-                textArea.appendText(msg + "\n");
-            }
+            });
         });
     }
 }
