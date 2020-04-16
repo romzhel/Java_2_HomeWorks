@@ -21,7 +21,7 @@ public class MyServer {
             while (true) {
                 System.out.println("Сервер ожидает подключения");
                 Socket socket = server.accept();
-                System.out.println("Клиент подключился");
+                System.out.println("Клиент подключился, ожидание авторизации");
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {
